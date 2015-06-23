@@ -1,0 +1,7 @@
+extends layout
+
+block content
+	p Push Message Management
+	form(action='/message',method='post')
+		input(id='content' name='content' type='text' )
+		input(type='submit')

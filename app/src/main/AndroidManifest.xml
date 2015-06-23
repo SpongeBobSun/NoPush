@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="sun.bob.nopushtest" >
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name="sun.bob.nopush.NoPushService"
+            android:enabled="true"
+            android:process=":NoPushService"
+            >
+            <!--android:process=":NoPushService" -->
+            <intent-filter>
+                <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT"/>
+                <action android:name="sun.bob.nopush.pull_up_from_util"/>
+                <action android:name="sun.bob.nopush.daemon_alive"/>
+                <action android:name="sun.bob.nopush.message"/>
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="sun.bob.nopush.daemon_pid"/>
+            </intent-filter>
+        </service>
+    </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET_ACCESS"/>
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"/>
+
+
+</manifest>

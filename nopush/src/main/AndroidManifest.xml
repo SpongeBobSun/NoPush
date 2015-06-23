@@ -1,0 +1,21 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="sun.bob.nopush">
+
+
+    <application android:allowBackup="true" android:label="@string/app_name">
+        <!--
+        <service android:name=".NoPushService"
+            android:enabled="true"
+            android:process=":NoPushService">
+            <intent-filter>
+                <action android:name="sun.bob.nopush.pull_up_from_util"/>
+                <action android:name="sun.bob.nopush.daemon_alive"/>
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="sun.bob.nopush.daemon_pid"/>
+            </intent-filter>
+        </service>
+        -->
+    </application>
+
+</manifest>
