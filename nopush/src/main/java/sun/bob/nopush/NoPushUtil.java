@@ -9,6 +9,8 @@ import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import sun.bob.nopush.utils.NotificationUtil;
+
 /**
  * Created by bobsun on 15-6-17.
  */
@@ -37,6 +39,7 @@ public class NoPushUtil {
 
     private void pullUpService(){
         Log.e("PackageName:", context.getPackageName());
+        NotificationUtil.getStaticInstance(context);
         Intent intent = new Intent("sun.bob.nopush.pull_up_from_util");
         intent.setPackage(context.getPackageName());
         intent.putExtra("server_addr", this.serverAddress);

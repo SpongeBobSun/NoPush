@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.CharBuffer;
 
+import sun.bob.nopush.utils.NotificationUtil;
+
 
 /**
  * Created by bobsun on 15-6-17.
@@ -67,20 +69,9 @@ public class NoPushService extends Service {
             Log.e("pid====================", "" + pid);
         }
         if (intent.getAction()!= null && intent.getAction().equalsIgnoreCase("sun.bob.nopush.message")){
-            Log.e("Receive data",intent.getStringExtra("rawData"));
+            NotificationUtil.getStaticInstance(getApplicationContext()).sendTextNotification(intent.getStringExtra("rawData"));
         }
         return START_REDELIVER_INTENT;
-    }
-
-    public boolean checkDaemonAlive(){
-        int pid = PreferenceUtils.getInstance(getApplicationContext()).getDaemonPid();
-        if (pid < 0){
-            daemonAlive = false;
-            return false;
-        }
-        Process.sendSignal(pid,SIGCHECKDEAMON);
-        daemonAlive = false;
-        return true;
     }
 
     public boolean checkDaemon(){
