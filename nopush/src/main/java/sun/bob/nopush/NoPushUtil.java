@@ -38,28 +38,12 @@ public class NoPushUtil {
     }
 
     private void pullUpService(){
-        Log.e("PackageName:", context.getPackageName());
         NotificationUtil.getStaticInstance(context);
         Intent intent = new Intent("sun.bob.nopush.pull_up_from_util");
         intent.setPackage(context.getPackageName());
         intent.putExtra("server_addr", this.serverAddress);
         intent.putExtra("server_port",this.serverPort);
-        Method myUserHandleMethod = null;
-        try {
-            Object userManager = context.getSystemService(Context.USER_SERVICE);
-            myUserHandleMethod = android.os.Process.class.getMethod("myUserHandle", (Class<?>[]) null);
-            Object myUserHandle = myUserHandleMethod.invoke(android.os.Process.class, (Object[]) null);
-            Method getSerialNumberForUser = userManager.getClass().getMethod("getSerialNumberForUser", myUserHandle.getClass());
-            long userSerial = (Long) getSerialNumberForUser.invoke(userManager, myUserHandle);
-            intent.putExtra("pid", (int)userSerial);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
+        intent.putExtra("package_name",context.getPackageName());
         context.startService(intent);
     }
 

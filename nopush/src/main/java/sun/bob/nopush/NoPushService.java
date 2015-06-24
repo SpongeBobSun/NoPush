@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.CharBuffer;
+import java.util.UUID;
 
 import sun.bob.nopush.utils.NotificationUtil;
 
@@ -38,7 +39,7 @@ public class NoPushService extends Service {
         System.loadLibrary("nopush");
     }
 
-    public native String entry(String addr, int port, int pid);
+    public native String entry(String addr, int port,String packageName, String uuid);
 
     public NoPushService(){
 
@@ -52,8 +53,12 @@ public class NoPushService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags,int startId) {
         if (intent.getAction()!= null && intent.getAction().equalsIgnoreCase("sun.bob.nopush.pull_up_from_util")) {
-            if (!checkDaemon())
-                entry(intent.getStringExtra("server_addr"), intent.getIntExtra("server_port", 22333),intent.getIntExtra("pid",0));
+            if (!checkDaemon()) {
+                String uuid = UUID.randomUUID().toString();
+                Log.e("UUID",uuid);
+                PreferenceUtils.getInstance(getApplicationContext()).setUUID(uuid);
+                entry(intent.getStringExtra("server_addr"), intent.getIntExtra("server_port", 22333), intent.getStringExtra("package_name"),uuid);
+            }
         }
 
         if (intent.getAction()!= null && intent.getAction().equalsIgnoreCase("sun.bob.nopush.daemon_alive")){

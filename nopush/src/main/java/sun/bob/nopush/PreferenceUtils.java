@@ -8,9 +8,7 @@ import android.content.SharedPreferences;
  */
 public class PreferenceUtils {
     private static PreferenceUtils staticInstance;
-    private boolean sound;
-    private boolean vibrate;
-    private int delayMin;
+
     private SharedPreferences sharedPreferences;
 
     private PreferenceUtils(Context context){
@@ -32,5 +30,9 @@ public class PreferenceUtils {
             pid = "-1";
         }
         sharedPreferences.edit().putString("pid", pid).commit();
+    }
+
+    public void setUUID(String uuid){
+        sharedPreferences.edit().putString("uuid",uuid).commit();
     }
 }

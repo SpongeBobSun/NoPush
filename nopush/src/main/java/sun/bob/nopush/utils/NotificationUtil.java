@@ -33,6 +33,7 @@ public class NotificationUtil {
         textNotification.tickerText = text;
         textNotification.when = System.currentTimeMillis();
         textNotification.contentView = new RemoteViews(appContext.getPackageName(),R.layout.notification_text_only);
+        textNotification.contentView.setCharSequence(R.id.id_text_view_text_only,"setText",text);
         notificationManager.notify("text_notification",100,textNotification);
     }
 

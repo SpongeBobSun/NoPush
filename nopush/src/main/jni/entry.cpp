@@ -21,40 +21,62 @@
 
 #define SIGCHECKDEAMON  50
 
-char* InitSocketParams(JNIEnv* env, char* addr, int port);
+void InitSocketParams(char* addr, int port);
 void SingalHandler(int sigNo);
 void Die(char* msg);
 void performIO();
 void sendStatusBroadcast();
 void sendDaemonPid();
+void heartbeat();
 
 static struct itimerval value, oldValue;
 static struct sockaddr_in server;
+static bool socketConnected = false;
+
 int socketFd = -1;
-int processId = 0;
 char* socketBuffer;
 char* cmdBuffer;
 char* broadcastMsgCmd = "am startservice --user 0 -a sun.bob.nopush.message -e rawData ";
 
+char* serverAddr;
+int port;
 
+char* UUID;
+char* packageName;
+char* heartbeatBuffer;
 
-JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject pThis, jstring server_addr, jint server_port, jint androidPid){
+JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject pThis, jstring server_addr, jint server_port, jstring package, jstring uuid){
         signal(SIGALRM, SingalHandler);
         signal(SIGCHECKDEAMON,SingalHandler);
-        value.it_interval.tv_sec = 3;
+        value.it_interval.tv_sec = 60;
         value.it_interval.tv_usec = 0;
-        value.it_value.tv_sec = 1;
+        value.it_value.tv_sec = 60;
         value.it_value.tv_usec = 0;
+
+        //Convert parameters.
+        jboolean isCopy;
+        UUID = (char*) malloc(36);
+        packageName = (char*) malloc(1024);
+        memcpy(UUID,(*env).GetStringUTFChars(uuid,&isCopy),36);
+        memset(packageName,'\0',1024);
+        memcpy(packageName,(*env).GetStringUTFChars(package,&isCopy),1024);
+
+        heartbeatBuffer = (char*)malloc(50);
+        memset(heartbeatBuffer,'\0',50);
+        memcpy(heartbeatBuffer,UUID,36);
+        heartbeatBuffer[36] = 'H';
 
         if (fork() > 0){
             return 0;
         }
-        processId = androidPid;
         char* errorStr = NULL;
         socketBuffer = (char*) malloc(1024);
         cmdBuffer = (char*) malloc(1024);
-        jboolean isCopy;
-        errorStr = InitSocketParams(env, (char* )(*env).GetStringUTFChars(server_addr,&isCopy),server_port);
+
+        //Save those params to global vars.
+        serverAddr = (char* )(*env).GetStringUTFChars(server_addr,&isCopy);
+        port = server_port;
+        InitSocketParams(serverAddr,port);
         signal(SIGIO,SingalHandler);
         setitimer(ITIMER_REAL, &value, &oldValue);
         while(1){
@@ -63,10 +85,10 @@ JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject p
     return (*env).NewStringUTF(errorStr);
 }
 
-char* InitSocketParams(JNIEnv* env, char* server_addr, int port){
+void InitSocketParams(char* server_addr, int port){
     if ( (socketFd = socket(AF_INET,SOCK_STREAM,0)) < 0){
         LOGE("Can not get socket fd");
-        return strerror(errno);
+        return;
     }
 
     memset(&server,0,sizeof(server));
@@ -98,21 +120,35 @@ char* InitSocketParams(JNIEnv* env, char* server_addr, int port){
             LOGE("set async error");
         }
     sendDaemonPid();
-    return NULL;
+    socketConnected = true;
+    return;
 }
 void SingalHandler(int sigNo){
   switch (sigNo){
     case SIGALRM:
+        heartbeat();
       break;
     case SIGIO:
-      performIO();
+        performIO();
       break;
     case SIGCHECKDEAMON:
         LOGE("Check status.");
-        break;
+      break;
     default:
       break;
   }
+}
+
+void heartbeat(){
+    if (!socketConnected){
+        InitSocketParams(serverAddr,port);
+        if (!socketConnected)  //Even God can not save you either.
+            return;
+    }
+    if (send(socketFd,heartbeatBuffer,50,0) < 0){
+        LOGE("Send heartbeat error.");
+        return;
+    }
 }
 
 void performIO(){
@@ -143,9 +179,10 @@ void performIO(){
 }
 
 void sendDaemonPid(){
-    char* cmd = "am startservice --user 0 -a sun.bob.nopush.daemon_pid -e pid %d sun.bob.nopushtest";
+    char* cmd = "am startservice --user 0 -a sun.bob.nopush.daemon_pid -e pid %d ";
     memset(cmdBuffer,'\0',sizeof(char)*1024);
     sprintf(cmdBuffer,cmd,getpid());
+    strcat(cmdBuffer,packageName);
     LOGE(cmdBuffer);
     system(cmdBuffer);
 }
