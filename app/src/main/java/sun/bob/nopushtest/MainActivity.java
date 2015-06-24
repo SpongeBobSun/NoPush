@@ -3,6 +3,7 @@ package sun.bob.nopushtest;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -11,13 +12,14 @@ import sun.bob.nopush.NoPushService;
 import sun.bob.nopush.NoPushUtil;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        NoPushUtil.initialize(getApplicationContext(),"10.0.2.2",22333);
+//        NoPushUtil.initialize(getApplicationContext(),"10.0.2.2",22333);
+        NoPushUtil.initialize(getApplicationContext(),"192.168.0.106",22333);
 //        NoPushUtil.initialize(getApplicationContext(),"10.10.14.139",22333);
     }
 

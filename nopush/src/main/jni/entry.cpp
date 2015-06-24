@@ -23,9 +23,7 @@
 
 void InitSocketParams(char* addr, int port);
 void SingalHandler(int sigNo);
-void Die(char* msg);
 void performIO();
-void sendStatusBroadcast();
 void sendDaemonPid();
 void heartbeat();
 
@@ -36,7 +34,7 @@ static bool socketConnected = false;
 int socketFd = -1;
 char* socketBuffer;
 char* cmdBuffer;
-char* broadcastMsgCmd = "am startservice --user 0 -a sun.bob.nopush.message -e rawData ";
+char* broadcastMsgCmd = "am startservice --user 0 -a sun.bob.nopush.message -e rawData \'";
 
 char* serverAddr;
 int port;
@@ -48,9 +46,9 @@ char* heartbeatBuffer;
 JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject pThis, jstring server_addr, jint server_port, jstring package, jstring uuid){
         signal(SIGALRM, SingalHandler);
         signal(SIGCHECKDEAMON,SingalHandler);
-        value.it_interval.tv_sec = 3;
+        value.it_interval.tv_sec = 60;
         value.it_interval.tv_usec = 0;
-        value.it_value.tv_sec = 3;
+        value.it_value.tv_sec = 60;
         value.it_value.tv_usec = 0;
 
         //Convert parameters.
@@ -69,6 +67,7 @@ JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject p
         if (fork() > 0){
             return 0;
         }
+        setsid();   //School out.
         char* errorStr = NULL;
         socketBuffer = (char*) malloc(1024);
         cmdBuffer = (char*) malloc(1024);
@@ -170,10 +169,14 @@ void performIO(){
         //Read operaton
         memset(socketBuffer,'\0',1024*sizeof(char));
         recv(socketFd,socketBuffer,1024,0);
+        int resultLen = strlen(socketBuffer);
+        if(resultLen == 0)
+            return;
         char extras[1100];
         memset(extras,'\0',sizeof(char)*1100);
         strcat(extras,broadcastMsgCmd);
         strcat(extras,socketBuffer);
+        strcat(extras,"\'");
         LOGE(extras);
         system(extras);
         return;
@@ -191,12 +194,4 @@ void sendDaemonPid(){
     strcat(cmdBuffer,packageName);
     LOGE(cmdBuffer);
     system(cmdBuffer);
-}
-
-void sendStatusBroadcast(){
-
-}
-void Die(char* msg){
-//  printf(msg);
-//  exit(-1);
 }
