@@ -48,9 +48,9 @@ char* heartbeatBuffer;
 JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject pThis, jstring server_addr, jint server_port, jstring package, jstring uuid){
         signal(SIGALRM, SingalHandler);
         signal(SIGCHECKDEAMON,SingalHandler);
-        value.it_interval.tv_sec = 60;
+        value.it_interval.tv_sec = 3;
         value.it_interval.tv_usec = 0;
-        value.it_value.tv_sec = 60;
+        value.it_value.tv_sec = 3;
         value.it_value.tv_usec = 0;
 
         //Convert parameters.
@@ -99,25 +99,30 @@ void InitSocketParams(char* server_addr, int port){
 
     if (connect(socketFd, (struct sockaddr*) &server, sizeof(server)) < 0){
         LOGE("Can not connect server");
-        LOGE(server_addr);
+        socketConnected = false;
+        return;
     }
 
     //Set socket to long lived. Amen.
     int enableVal = 1;
     if (setsockopt(socketFd, SOL_SOCKET, SO_KEEPALIVE, &enableVal, sizeof(int)) < 0){
         LOGE("Can not set socket option");
+        socketConnected = false;
+        return;
     }
 
     //Set async IO.
     pid_t myPid = getpid(); //Get current pid first.
     int err;
     if ( (err = fcntl(socketFd, F_SETOWN, myPid) ) < 0 ) {  //Set socket fd's owner to current process.
-            Die(strerror(err));
             LOGE("set own error");
+            socketConnected = false;
+            return;
         }
     if ( (err = ioctl(socketFd, FIOASYNC, &enableVal) ) < 0) {
-            Die(strerror(err));
             LOGE("set async error");
+            socketConnected = false;
+            return;
         }
     sendDaemonPid();
     socketConnected = true;
@@ -147,6 +152,7 @@ void heartbeat(){
     }
     if (send(socketFd,heartbeatBuffer,50,0) < 0){
         LOGE("Send heartbeat error.");
+        socketConnected = false;
         return;
     }
 }
