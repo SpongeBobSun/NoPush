@@ -13,6 +13,10 @@ server.on('connection',function(socket){
   });
   socket.on('data',function(data){
     console.log('on data:' + data);
+    if (data.charAt(36) == 'H' ){
+      //Heartbeat
+      var token = data.slice(0,35);
+    }
   });
 });
 // server.listen(22333);

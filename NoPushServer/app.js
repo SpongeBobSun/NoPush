@@ -1,3 +1,7 @@
+/// <reference path="./typings/node/node.d.ts" />
+/// <reference path="./typings/express/express.d.ts" />
+
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -8,6 +12,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var message = require('./routes/message');
+var appid = require('./routes/appid');
 
 var pushServer = require('./socket').PushServer;
 
@@ -28,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/web', routes);
 app.use('/users', users);
 app.use('/message', message);
+app.use('/appid',appid);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -62,6 +68,6 @@ app.use(function(err, req, res, next) {
 
 pushServer.listen(22333);
 
-app.listen(8080);
+app.listen(5020);
 
 module.exports = app;
