@@ -39,7 +39,7 @@ public class NoPushService extends Service {
         System.loadLibrary("nopush");
     }
 
-    public native String entry(String addr, int port,String packageName, String uuid);
+    public native void entry(String addr, int port,String packageName, String uuid);
 
     public NoPushService(){
 
@@ -55,9 +55,9 @@ public class NoPushService extends Service {
         if (intent.getAction()!= null && intent.getAction().equalsIgnoreCase("sun.bob.nopush.pull_up_from_util")) {
             if (!checkDaemon()) {
                 String uuid = UUID.randomUUID().toString();
-                Log.e("UUID",uuid);
+                Log.e("UUID", uuid);
                 PreferenceUtils.getInstance(getApplicationContext()).setUUID(uuid);
-                entry(intent.getStringExtra("server_addr"), intent.getIntExtra("server_port", 22333), intent.getStringExtra("package_name"),uuid);
+                entry(intent.getStringExtra("server_addr"), intent.getIntExtra("server_port", 22333), intent.getStringExtra("package_name"), uuid);
             }
         }
 
@@ -117,6 +117,23 @@ public class NoPushService extends Service {
     class ServiceBinder extends Binder {
         public Service getService(){
             return NoPushService.this;
+        }
+    }
+
+    class NDKRunnable implements Runnable {
+
+        String addr,uuid,packageName;
+        int port;
+
+        public NDKRunnable(String serverAddr,int port,String packageName,String uuid){
+            this.addr = serverAddr;
+            this.port = port;
+            this.uuid = uuid;
+            this.packageName = packageName;
+        }
+        @Override
+        public void run() {
+            entry(addr,port,packageName,uuid);
         }
     }
 }

@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        NoPushUtil.initialize(getApplicationContext(),"10.0.2.2",22333);
-        NoPushUtil.initialize(getApplicationContext(),"192.168.0.106",22333);
-//        NoPushUtil.initialize(getApplicationContext(),"10.10.14.139",22333);
+//        NoPushUtil.initialize(getApplicationContext(),"192.168.0.106",22333);
+        NoPushUtil.initialize(getApplicationContext(),"10.10.14.139",22333);
     }
 
     @Override

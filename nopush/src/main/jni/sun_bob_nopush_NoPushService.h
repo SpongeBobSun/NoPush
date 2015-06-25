@@ -12,7 +12,7 @@ extern "C" {
  * Method:    entry
  * Signature: (Ljava/lang/String;I)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_sun_bob_nopush_NoPushService_entry
+JNIEXPORT void JNICALL Java_sun_bob_nopush_NoPushService_entry
   (JNIEnv *, jobject, jstring, jint,jstring,jstring);
 
 #ifdef __cplusplus

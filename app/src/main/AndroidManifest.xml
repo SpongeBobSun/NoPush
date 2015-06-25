@@ -19,7 +19,6 @@
             android:enabled="true"
             android:process=":NoPushService"
             >
-            <!--android:process=":NoPushService" -->
             <intent-filter>
                 <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT"/>
                 <action android:name="sun.bob.nopush.pull_up_from_util"/>

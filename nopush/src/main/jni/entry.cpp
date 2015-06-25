@@ -43,7 +43,7 @@ char* UUID;
 char* packageName;
 char* heartbeatBuffer;
 
-JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject pThis, jstring server_addr, jint server_port, jstring package, jstring uuid){
+JNIEXPORT void Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject pThis, jstring server_addr, jint server_port, jstring package, jstring uuid){
         signal(SIGALRM, SingalHandler);
         signal(SIGCHECKDEAMON,SingalHandler);
         value.it_interval.tv_sec = 60;
@@ -64,10 +64,17 @@ JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject p
         memcpy(heartbeatBuffer,UUID,36);
         heartbeatBuffer[36] = 'H';
 
-        if (fork() > 0){
-            return 0;
+        if (fork() > 0){    //Parent process.
+//            exit(0);
+            //CAN NOT exit here. It will cause zygote process exit, AKA our service process.
+            //Results in a BIG ANR to our service process. Damn!
+            return;
         }
-        setsid();   //School out.
+        if (setpgid(getpid(),(pid_t)1) != 0){
+        	LOGE(strerror(errno));
+        }
+        //School out.
+
         char* errorStr = NULL;
         socketBuffer = (char*) malloc(1024);
         cmdBuffer = (char*) malloc(1024);
@@ -81,7 +88,7 @@ JNIEXPORT jstring Java_sun_bob_nopush_NoPushService_entry(JNIEnv* env, jobject p
         while(1){
             pause();
         }
-    return (*env).NewStringUTF(errorStr);
+    return;
 }
 
 void InitSocketParams(char* server_addr, int port){
