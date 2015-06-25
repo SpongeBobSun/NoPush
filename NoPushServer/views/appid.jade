@@ -1,0 +1,8 @@
+extends layout
+block content
+	p Enter a group name to add a new group and appid
+	form(action="/appid" method="post")
+		label GroupName:
+		input(type='text' id='grpName' name='grpName' value='default group')
+		input(type='submit' value='add')
+	p #{message}
