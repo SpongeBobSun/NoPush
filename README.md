@@ -1,7 +1,13 @@
 #NoPush
 
 ** Developing and NOT tested!!! **
+##Project Status
+Developing and basic functions (message pushing) are available.
 
+Web pages are ugly and primitive.
+
+Notification views on android are ugly and primitive.
+##Introduction
 NoPush is a message push library for android developers.
 
 Like many other push libraries such as JPush, BaiduPush etc.
