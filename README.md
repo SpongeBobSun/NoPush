@@ -60,6 +60,17 @@ After this, you can use below code to initialize the library.
 
 Finally, send a message in your browser and your phone will get a push message.
 
+##Server interface
+In NoPush server, there is an interface for other back-end apps. To use it, follow below instructions to send a POST request to `http://your.server.address/push`.
+
+    {
+        notifications: Good news every one!,
+        message: Planet express ship is broken!,
+        icon: http://some.funny.icon.address
+    }
+
+One thing to be noticed is, notification & message can not all be null at the same time. Notification content will be displayed as a notification. Message content will trigger a broadcast (NOT a notification) and you can do anything you like with it. As for the icon field, it's totally optional.
+
 ##How does it work?
 Well, it's pretty simple.
 
