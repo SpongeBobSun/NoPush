@@ -1,6 +1,4 @@
 #NoPush
-
-** Developing and NOT tested!!! **
 ##Project Status
 Developing and basic functions (message pushing) are available.
 
