@@ -12,7 +12,9 @@ router.get('/',function(req,res,next){
 
 router.post('/',function(req,res,next){
 	console.log('Push request :'+req.body);
-	msgSender(req.body.content);
+	msgSender(JSON.stringify({
+		notification: req.body.content
+	}));
 	res.render('message');
 });
 module.exports = router;

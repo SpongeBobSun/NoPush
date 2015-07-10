@@ -13,6 +13,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var message = require('./routes/message');
 var appid = require('./routes/appid');
+var push = require('./routes/push');
 
 var pushServer = require('./socket').PushServer;
 
@@ -34,6 +35,7 @@ app.use('/web', routes);
 app.use('/users', users);
 app.use('/message', message);
 app.use('/appid',appid);
+app.use('/push',push);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

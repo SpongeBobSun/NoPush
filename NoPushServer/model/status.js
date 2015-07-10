@@ -23,6 +23,6 @@ var updateStatus = function(id){
 	}).ok(function(result){
 		//TODO
 		//EOD TAG
-		statusBean.update({lastonline:Sequelize.fn('current_timestamp')},{where:{id:id}})
+		statusBean.update({lastonline:Sequelize.fn('current_timestamp')},{where:{id:id}});
 	});
 };

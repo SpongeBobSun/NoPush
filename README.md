@@ -27,7 +27,7 @@ First, deploy the server on your own server.
 
 You can just use `npm install` and 'node app` to run the server. The server will listen to port 22333 by default.
 
-With the server running, you can visit `http://your.server.address/message` for a message send interface.
+With the server running, you can visit `http://your.server.address/message` for a message sending interface.
 
 It's pretty ugly & savage right now.
 
