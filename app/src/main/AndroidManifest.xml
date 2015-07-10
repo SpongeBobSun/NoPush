@@ -17,7 +17,7 @@
         </activity>
         <service android:name="sun.bob.nopush.NoPushService"
             android:enabled="true"
-
+            android:process=":NoPushService"
             >
             <intent-filter>
                 <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT"/>
