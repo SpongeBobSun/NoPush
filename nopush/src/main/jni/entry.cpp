@@ -158,6 +158,7 @@ void heartbeat(){
     }
     if (send(socketFd,heartbeatBuffer,50,0) < 0){
         LOGE("Send heartbeat error.");
+        close(socketFd);
         socketConnected = false;
         return;
     }

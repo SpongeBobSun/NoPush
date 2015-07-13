@@ -35,6 +35,8 @@ public class NoPushService extends Service {
 
     public static boolean daemonAlive;
 
+    private Intent initIntent;
+
     static {
         System.loadLibrary("nopush");
     }
@@ -53,6 +55,7 @@ public class NoPushService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags,int startId) {
         if (intent.getAction()!= null && intent.getAction().equalsIgnoreCase("sun.bob.nopush.pull_up_from_util")) {
+            initIntent = intent;
             if (!checkDaemon()) {
                 String uuid = UUID.randomUUID().toString();
                 Log.e("UUID", uuid);
@@ -120,20 +123,4 @@ public class NoPushService extends Service {
         }
     }
 
-    class NDKRunnable implements Runnable {
-
-        String addr,uuid,packageName;
-        int port;
-
-        public NDKRunnable(String serverAddr,int port,String packageName,String uuid){
-            this.addr = serverAddr;
-            this.port = port;
-            this.uuid = uuid;
-            this.packageName = packageName;
-        }
-        @Override
-        public void run() {
-            entry(addr,port,packageName,uuid);
-        }
-    }
 }
